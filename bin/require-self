@@ -8,9 +8,14 @@ var cwd = process.cwd();
 var pkg = require(path.join(cwd, 'package.json'));
 var name = pkg.name;
 
+// If the package.json defines a main entry point, use that instead
+// of just plain '..'.
+var main = pkg.main;
+var mainPath = main ? path.join('..', main).split('\\').join('/') : '..';
+
 // Compute the location and content for the pseudo-module.
 var modulePath = path.join(cwd, 'node_modules', name + '.js');
-var moduleText = "module.exports = require('..');";
+var moduleText = "module.exports = require('" + mainPath + "');";
 
 // Create the pseudo-module.
 fs.writeFileSync(modulePath, moduleText);
